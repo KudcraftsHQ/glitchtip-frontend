@@ -1,0 +1,129 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --bg: #fbfbfa;
+  --panel: #ffffff;
+  --sunken: #f3f3f1;
+  --hover: #f0f0ee;
+  --border: #e6e6e3;
+  --border-strong: #d4d4d0;
+  --fg: #18181a;
+  --muted: #6b6b70;
+  --faint: #9a9aa0;
+  --accent: #e5484d;
+  --accent-soft: #fdecec;
+  --sel: #eef0fb;
+  --fatal: #b4232a;
+  --error: #e5484d;
+  --warning: #d97706;
+  --info: #3b82f6;
+  --debug: #8b8b93;
+  --ok: #16a34a;
+  --str: #15803d;
+  --num: #2563eb;
+  color-scheme: light;
+}
+.dark {
+  --bg: #0c0c0d;
+  --panel: #121214;
+  --sunken: #09090a;
+  --hover: #18181b;
+  --border: #222226;
+  --border-strong: #2e2e33;
+  --fg: #ececee;
+  --muted: #8d8d96;
+  --faint: #5c5c64;
+  --accent: #f2555a;
+  --accent-soft: #2a1416;
+  --sel: #171a2a;
+  --fatal: #ff6b70;
+  --error: #f2555a;
+  --warning: #f5a524;
+  --info: #60a5fa;
+  --debug: #7a7a84;
+  --ok: #3ecf6e;
+  --str: #86d9a5;
+  --num: #8ab4ff;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-sunken: var(--sunken);
+  --color-hover: var(--hover);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-sel: var(--sel);
+  --color-fatal: var(--fatal);
+  --color-error: var(--error);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+  --color-debug: var(--debug);
+  --color-ok: var(--ok);
+  --color-str: var(--str);
+  --color-num: var(--num);
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+html, body, #root { height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "cv11", "ss01";
+}
+::selection { background: color-mix(in srgb, var(--accent) 30%, transparent); }
+* { scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent; }
+
+/* ---- Motion — the vocabulary T3 Code uses: 200ms scale-98/opacity for overlays,
+   a drawer curve for things that slide, stepped skeleton pulses. */
+@theme {
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-skeleton: skeleton 2.4s infinite;
+  @keyframes skeleton {
+    /* One opacity breath, stepped so the compositor draws a handful of frames per
+       cycle instead of one per vsync. */
+    0%, 42% { opacity: 1; animation-timing-function: steps(4); }
+    50%, 92% { opacity: 0.55; animation-timing-function: steps(4); }
+    100% { opacity: 1; }
+  }
+}
+
+@utility dialog-backdrop {
+  background: color-mix(in srgb, var(--bg) 60%, transparent);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+@utility dialog-glass {
+  background: color-mix(in srgb, var(--panel) 86%, transparent);
+  backdrop-filter: blur(14px) saturate(1.14);
+  -webkit-backdrop-filter: blur(14px) saturate(1.14);
+  border-color: color-mix(in srgb, var(--fg) 10%, transparent);
+  box-shadow: 0 24px 64px -24px rgb(0 0 0 / 45%);
+}
+.dark .dialog-glass { box-shadow: 0 24px 64px -24px rgb(0 0 0 / 80%); }
+
+/* Theme switches are instant: nothing should cross-fade between palettes. */
+.no-transitions, .no-transitions *, .no-transitions *::before, .no-transitions *::after {
+  transition-duration: 0s !important;
+  animation-duration: 0s !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
