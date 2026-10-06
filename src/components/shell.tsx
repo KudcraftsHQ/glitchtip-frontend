@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, Outlet, useNavigate, useParams, useSearch } from "@tanstack/react-router";
+import { Link, Navigate, Outlet, useLocation, useNavigate, useParams, useSearch } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
 import { ChevronsUpDown, Inbox, LogOut, Menu, Moon, Search, Sun } from "lucide-react";
@@ -14,7 +14,8 @@ import { Logo, sessionKey, fetchSession } from "../auth";
 
 export function Shell() {
   const { org } = useParams({ from: "/$org" });
-  localStorage.setItem("org", org);
+  const orgs = useQuery(orgsQuery);
+  const location = useLocation();
   const [drawer, setDrawer] = useState(false);
   const [command, setCommand] = useState(false);
   useMountEffect(() => {
@@ -27,6 +28,13 @@ export function Shell() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   });
+  // The API's issue `permalink` puts the project slug where the org belongs.
+  // Any first segment that isn't an org is rewritten to the user's org.
+  if (orgs.data && !orgs.data.some((o) => o.slug === org)) {
+    const fallback = orgs.data.find((o) => o.slug === localStorage.getItem("org")) ?? orgs.data[0];
+    if (fallback) return <Navigate to={location.href.replace(`/${org}`, `/${fallback.slug}`)} replace />;
+  }
+  localStorage.setItem("org", org);
   return (
     <div className="flex h-full">
       <div
