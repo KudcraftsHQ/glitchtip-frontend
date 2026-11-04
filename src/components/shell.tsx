@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, Navigate, Outlet, useLocation, useNavigate, useParams, useSearch } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
-import { ChevronsUpDown, Inbox, LogOut, Menu, Moon, Search, Sun } from "lucide-react";
+import { ChartColumn, ChevronsUpDown, Inbox, LogOut, Menu, Moon, Search, Sun } from "lucide-react";
 import { CommandCenter } from "./command";
 import { useMountEffect } from "../lib/hooks";
 import { Kbd } from "./ui";
@@ -71,6 +71,7 @@ function Sidebar({ org, open, onNavigate, onSearch }: { org: string; open: boole
   const projects = useQuery(projectsQuery(org));
   const search = useSearch({ strict: false }) as { project?: string };
   const navigate = useNavigate();
+  const onOverview = useLocation().pathname.endsWith("/overview");
   const qc = useQueryClient();
   const session = useQuery({ queryKey: sessionKey, queryFn: fetchSession, staleTime: Infinity });
   const [dark, setDark] = useState(() => document.documentElement.classList.contains("dark"));
@@ -142,12 +143,16 @@ function Sidebar({ org, open, onNavigate, onSearch }: { org: string; open: boole
           <span className="ml-auto hidden items-center gap-0.5 md:flex"><Kbd>{navigator.platform.includes("Mac") ? "⌘" : "Ctrl"}</Kbd><Kbd>K</Kbd></span>
         </button>
       </div>
-      <nav className="px-2">
+      <nav className="flex flex-col gap-px px-2">
+        <Link to="/$org/overview" params={{ org }} className={item} activeProps={{ className: "bg-hover text-fg" }}>
+          <ChartColumn className="size-3.5" />
+          Overview
+        </Link>
         <Link
           to="/$org/issues"
           params={{ org }}
           search={(s) => ({ ...s, project: undefined })}
-          className={clsx(item, !search.project && "bg-hover text-fg")}
+          className={clsx(item, !search.project && !onOverview && "bg-hover text-fg")}
           activeOptions={{ exact: true, includeSearch: false }}
         >
           <Inbox className="size-3.5" />

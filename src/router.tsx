@@ -4,6 +4,7 @@ import { orgsQuery } from "./lib/queries";
 import { Shell } from "./components/shell";
 import { IssuesPage, type IssuesSearch } from "./routes/issues";
 import { IssuePage } from "./routes/issue";
+import { OverviewPage } from "./routes/overview";
 import { Spinner } from "./components/ui";
 
 const rootRoute = createRootRoute({ component: Outlet });
@@ -42,6 +43,8 @@ export const issuesRoute = createRoute({
   component: IssuesPage,
 });
 
+export const overviewRoute = createRoute({ getParentRoute: () => orgRoute, path: "overview", component: OverviewPage });
+
 export const issueRoute = createRoute({
   getParentRoute: () => orgRoute,
   path: "issues/$issueId",
@@ -52,7 +55,7 @@ export const issueRoute = createRoute({
 });
 
 export const router = createRouter({
-  routeTree: rootRoute.addChildren([indexRoute, orgRoute.addChildren([orgIndexRoute, issuesRoute, issueRoute])]),
+  routeTree: rootRoute.addChildren([indexRoute, orgRoute.addChildren([orgIndexRoute, overviewRoute, issuesRoute, issueRoute])]),
   defaultPreload: "intent",
 });
 
