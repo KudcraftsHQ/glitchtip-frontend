@@ -1,16 +1,14 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { QueryClient, QueryClientProvider, useQuery, useQueryClient } from "@tanstack/react-query";
+import { QueryClientProvider, useQuery, useQueryClient } from "@tanstack/react-query";
 import { RouterProvider } from "@tanstack/react-router";
 import { router } from "./router";
 import { Login, fetchSession, sessionKey } from "./auth";
 import { Spinner } from "./components/ui";
 import { useMountEffect } from "./lib/hooks";
+import { queryClient } from "./lib/query-client";
 import "./index.css";
 
-const queryClient = new QueryClient({
-  defaultOptions: { queries: { retry: (n, e) => n < 2 && !/^40[13]/.test(String(e?.message)), refetchOnWindowFocus: true } },
-});
 
 function App() {
   const qc = useQueryClient();
